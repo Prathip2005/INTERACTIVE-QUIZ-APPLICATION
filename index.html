@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quiz App</title>
+  <style>
+    body { font-family: sans-serif; background: #f0f0f0; display: flex; justify-content: center; align-items: center; height: 100vh; }
+    .quiz-container { background: #fff; padding: 20px; border-radius: 8px; width: 300px; text-align: center; box-shadow: 0 0 10px #ccc; }
+    .btn { display: block; margin: 10px 0; padding: 10px; width: 100%; border: none; border-radius: 5px; cursor: pointer; }
+    .btn.correct { background-color: #4CAF50; color: white; }
+    .btn.wrong { background-color: #f44336; color: white; }
+    #next { margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <div class="quiz-container">
+    <h2 id="question">Question text</h2>
+    <div id="answers"></div>
+    <button id="next" style="display:none;">Next</button>
+    <div id="score" style="margin-top:15px;"></div>
+  </div>
+  <script>
+    const questions = [
+      { q: "Capital of France?", a: ["Paris", "London", "Rome", "Berlin"], c: 0 },
+      { q: "2 + 2 = ?", a: ["3", "4", "5", "22"], c: 1 },
+      { q: "Color of the sky?", a: ["Green", "Blue", "Red", "Yellow"], c: 1 }
+    ];
+    let current = 0, score = 0;
+    const qEl = document.getElementById("question");
+    const aEl = document.getElementById("answers");
+    const nextBtn = document.getElementById("next");
+    const scoreEl = document.getElementById("score");
+
+    function showQuestion() {
+      qEl.textContent = questions[current].q;
+      aEl.innerHTML = "";
+      questions[current].a.forEach((ans, i) => {
+        const btn = document.createElement("button");
+        btn.textContent = ans;
+        btn.classList.add("btn");
+        btn.onclick = () => selectAnswer(i, btn);
+        aEl.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(i, btn) {
+      const correct = i === questions[current].c;
+      if (correct) {
+        btn.classList.add("correct");
+        score++;
+      } else {
+        btn.classList.add("wrong");
+        aEl.children[questions[current].c].classList.add("correct");
+      }
+      Array.from(aEl.children).forEach(b => b.disabled = true);
+      nextBtn.style.display = "block";
+    }
+
+    nextBtn.onclick = () => {
+      current++;
+      if (current < questions.length) {
+        nextBtn.style.display = "none";
+        showQuestion();
+      } else {
+        qEl.textContent = "Quiz Complete!";
+        aEl.innerHTML = "";
+        nextBtn.style.display = "none";
+        scoreEl.textContent = `Your Score: ${score} / ${questions.length}`;
+      }
+    };
+
+    showQuestion();
+  </script>
+</body>
+</html>
+
